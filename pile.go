@@ -54,6 +54,7 @@ type Pile struct {
 	InsertionStarts       uint32 // counts of base preceding an 'I' cigar op
 	InsertionEnds         uint32
 	Deletions             uint32  // counts of deletions 'D' at this base
+	Skips                 uint32  // counts of skips 'N' at this base
 	Heads                 uint32  // counts of starts of reads at this base
 	Tails                 uint32  // counts of ends of reads at this base
 	Splitters             uint32  // count of non-secondary reads with SA tags.
@@ -258,6 +259,9 @@ func (p *Pile) Update(o Options, alns []*Align) {
 
 		if s.At.Type() == sam.CigarDeletion {
 			p.Deletions++
+		}
+		if s.At.Type() == sam.CigarSkipped {
+			p.Skips++
 		}
 		if o.IncludeBases {
 			p.Bases = append(p.Bases, s.Base)
